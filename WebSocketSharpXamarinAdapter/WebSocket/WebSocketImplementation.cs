@@ -140,8 +140,11 @@ namespace WebSocketSharpXamarinAdapter.WebSocket
             UnsubscribeListeners();
             _webSocket?.Abort();
             _webSocket = null;
-            _keepAliveRequestTimer.Elapsed -= InitKeepAliveRequest;
-            _keepAliveRequestTimer.Stop();
+            if (_keepAliveRequestTimer != null)
+            {
+                _keepAliveRequestTimer.Elapsed -= InitKeepAliveRequest;
+                _keepAliveRequestTimer.Stop();
+            }
             Closed?.Invoke(reason);
         }
 
@@ -195,7 +198,10 @@ namespace WebSocketSharpXamarinAdapter.WebSocket
             var uri = new Uri($"https://{_socketParameters.Host}");
 
             _cookieContainer.Add(uri, new Cookie("um_session", _socketParameters.UmId));
-            _cookieContainer.Add(uri, new Cookie("WEBSRV", _socketParameters.WebSrv));
+            if (_socketParameters.WebSrv != null)
+            {
+                _cookieContainer.Add(uri, new Cookie("WEBSRV", _socketParameters.WebSrv));
+            }
         }
 
         #endregion
